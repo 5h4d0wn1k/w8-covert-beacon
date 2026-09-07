@@ -82,7 +82,12 @@ Use this tool only on networks you own or for which you have written permission 
 
 ### Prohibited Use
 
-Do not use this tool to exfiltrate data from networks you do not own, to evade corporate data-loss prevention systems without authorisation, or to intercept communications without consent. Any use that violates applicable law or organisational policy is strictly prohibited.
+Do not use this tool to exfiltrate data from networks you do not own, to evade corporate data-loss prevention systems without authorisation, or to intercept communications without consent. Do not radiate covert beacons on any real channel outside a licensed, authorized, shield-attenuated lab. Any use that violates applicable law or organisational policy is strictly prohibited. Operating an intentional radiator outside FCC/regulatory limits is prohibited.
+
+### Regulatory Framework
+- **Federal Communications Act (47 U.S.C. § 333)**: Willful interference with authorized radio communications is prohibited.
+- **47 CFR Part 15 / Part 18**: Unauthorized intentional radiators and out-of-spec electromagnetic emissions are regulated.
+- **Computer Fraud and Abuse Act (CFAA, 18 U.S.C. § 1030)** and state computer-crime laws apply to unauthorized data access.
 
 ### No Warranty
 
@@ -91,6 +96,37 @@ This software is provided "as is" without warranty of any kind. The authors assu
 ### Responsible Disclosure
 
 If you discover vulnerabilities using this tool, report them to the affected vendor or network operator privately. Allow reasonable time for remediation before public disclosure. Follow coordinated vulnerability disclosure (CVD) best practices.
+
+## Live Lab Test Plan
+
+This repo is a byte-level covert-channel *engineering* tool: the C2 beacon frames are built,
+parsed, and carried over pcap fixtures entirely offscreen — no radio.
+
+Offline (this repo, no radio):
+1. `python3 firmware/covert_beacon.py encode --message "hello" --pcap-out reports/c2.pcap --json reports/w8.json`
+   — build the beacon-as-C2 frames; then
+   `python3 firmware/covert_beacon.py decode --pcap reports/c2.pcap` — recover the payload (exit 0).
+2. `python3 firmware/covert_beacon.py detect --ies ...` — run the IE-entropy detector and
+   confirm covert frames are flagged while clean controls are not (exit 0).
+3. `python3 -m unittest discover -s tests` — byte-exact unit tests pass (exit 0).
+
+Authorized lab (only with written scope + shield + authorized channel):
+4. Transmit the exact beacon bytes in a shielded enclosure and decode them with a lab monitor
+   running `decode --pcap` — confirm byte-identical payload recovery.
+5. `green = permitted`: any real-air covert transmission requires written lab authorization,
+   an air-gapped/shielded bench, an authorized channel, and no use against networks you don't own.
+
+## Metrics
+
+- Beacon-as-C2: payload chunked into vendor-specific IEs (element 221, OUI FA:D4:02, type 0x77)
+  carried in full 802.11 beacon frames; XOR key option
+- Frame type engineered byte-exact: beacon (subtype 8); FCS append + verify
+- IE-entropy detector: flags vendor-IE payloads above entropy 4.5; verdict normal/suspect/covert
+- pcap round-trip: encode -> fixture -> decode, deterministic
+- Offline: all frames synthesized as bytes; no wall-clock randomness in the engine path
+
+- Test suite: `python3 -m unittest discover -s tests`
+- Reports: `reports/` (gitignored)
 
 ## License
 
