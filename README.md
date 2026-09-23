@@ -5,6 +5,9 @@
 > [SCOPE.md](SCOPE.md) before use. Use at your own risk; **AS IS**, no warranty.
 # W8 — Management-frame covert channel (exfil + detection) — w8-covert-beacon
 
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
+
 Pure-Python 802.11 beacon/probe-response covert encoder and IE-entropy detector for exfiltrating data via vendor Information Elements and detecting such covert channels.
 
 ## Overview
@@ -135,4 +138,14 @@ Authorized lab (only with written scope + shield + authorized channel):
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE). Educational and authorized testing use only.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+Report security issues via [SECURITY.md](SECURITY.md).
+
+## Documentation
+
+- [ETHICS.md](ETHICS.md) — usage policy
+- [SCOPE.md](SCOPE.md) — authorized testing scope
